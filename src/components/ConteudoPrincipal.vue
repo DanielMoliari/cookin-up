@@ -14,7 +14,11 @@ export default {
       <span class="subtitulo-lg sua-lista-texto"> Sua lista: </span>
 
       <ul class="ingredientes-sua-lista">
-        <li v-for="ingrediente in ingredientes" class="ingrediente">
+        <li
+          v-for="ingrediente in ingredientes"
+          :key="ingrediente"
+          class="ingrediente"
+        >
           {{ ingrediente }}
         </li>
       </ul>
