@@ -5,13 +5,16 @@ import SuaLista from './SuaLista.vue';
 export default {
   data() {
     return {
-      ingredientes: [] as String[],
+      ingredientes: [] as string[],
     };
   },
   components: { SelecionarIngredientes, SuaLista },
   methods: {
     adicionarIngrediente(ingrediente: string) {
       this.ingredientes.push(ingrediente);
+    },
+    removerIngrediente(ingrediente: string) {
+      this.ingredientes = this.ingredientes.filter(iLista => ingrediente !== iLista);
     },
   },
 };
@@ -20,7 +23,7 @@ export default {
 <template>
   <main class="conteudo-principal">
     <SuaLista :ingredientes="ingredientes" />
-    <SelecionarIngredientes @adicionar-ingrediente="adicionarIngrediente" />
+    <SelecionarIngredientes @adicionar-ingrediente="adicionarIngrediente" @remover-ingrediente="removerIngrediente"/>
   </main>
 </template>
 
