@@ -3,21 +3,33 @@ import { obterReceitas } from '@/http';
 import type IReceita from '@/interfaces/IReceita';
 import BotaoPrincipal from './BotaoPrincipal.vue';
 import CardReceita from './CardReceita.vue';
+import type { PropType } from 'vue';
+import { itensDeLista1EstaoEmLista2 } from '@/operacoes/listas';
 
 export default {
+  props: {
+    ingredientes: { type: Array as PropType<string[]>, required: true },
+  },
   data() {
     return {
-      receitasEncontradas: [] as IReceita[]
+      receitasEncontradas: [] as IReceita[],
     };
   },
   async created() {
     const receitas = await obterReceitas();
 
-    this.receitasEncontradas = receitas.slice(0, 8);
+    this.receitasEncontradas = receitas.filter((receita) => {
+      const possoFazerReceita = itensDeLista1EstaoEmLista2(
+        receita.ingredientes,
+        this.ingredientes,
+      );
+
+      return possoFazerReceita;
+    });
   },
   components: { BotaoPrincipal, CardReceita },
-  emits: ['editarReceitas']
-}
+  emits: ['editarReceitas'],
+};
 </script>
 
 <template>
@@ -30,7 +42,8 @@ export default {
 
     <div v-if="receitasEncontradas.length" class="receitas-wrapper">
       <p class="paragrafo-lg informacoes">
-        Veja as opções de receitas que encontramos com os ingredientes que você tem por aí!
+        Veja as opções de receitas que encontramos com os ingredientes que você
+        tem por aí!
       </p>
 
       <ul class="receitas">
@@ -42,11 +55,14 @@ export default {
 
     <div v-else class="receitas-nao-encontradas">
       <p class="paragrafo-lg receitas-nao-encontradas__info">
-        Ops, não encontramos resultados para sua combinação. Vamos tentar de novo?
+        Ops, não encontramos resultados para sua combinação. Vamos tentar de
+        novo?
       </p>
 
-      <img src="../assets/imagens/sem-receitas.png"
-        alt="Desenho de um ovo quebrado. A gema tem um rosto com uma expressão triste.">
+      <img
+        src="../assets/sem-receitas.png"
+        alt="Desenho de um ovo quebrado. A gema tem um rosto com uma expressão triste."
+      />
     </div>
 
     <BotaoPrincipal texto="Editar lista" @click="$emit('editarReceitas')" />
@@ -62,12 +78,12 @@ export default {
 }
 
 .titulo-receitas {
-  color: var(--verde-medio, #3D6D4A);
+  color: var(--verde-medio, #3d6d4a);
   margin-bottom: 1.5rem;
 }
 
 .resultados-encontrados {
-  color: var(--verde-medio, #3D6D4A);
+  color: var(--verde-medio, #3d6d4a);
   margin-bottom: 0.5rem;
 }
 
